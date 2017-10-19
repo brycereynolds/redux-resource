@@ -32,6 +32,14 @@ describe('getStatus', function() {
             updateStatus: requestStatuses.FAILED,
           }
         },
+      },
+      things: {
+        'pasta.is.tasty': {
+          readStatus: requestStatuses.SUCCEEDED
+        },
+        24: {
+          updateStatus: requestStatuses.FAILED
+        }
       }
     };
   });
@@ -130,6 +138,26 @@ describe('getStatus', function() {
         null: false,
         pending: true,
         failed: false,
+        succeeded: false
+      });
+      expect(console.error.callCount).to.equal(0);
+    });
+
+    it('should support bracket syntax for keys with periods in them', () => {
+      expect(getStatus(this.state, 'things["pasta.is.tasty"].readStatus')).to.deep.equal({
+        null: false,
+        pending: false,
+        failed: false,
+        succeeded: true
+      });
+      expect(console.error.callCount).to.equal(0);
+    });
+
+    it('should support bracket syntax for numbers', () => {
+      expect(getStatus(this.state, 'things[24].updateStatus')).to.deep.equal({
+        null: false,
+        pending: false,
+        failed: true,
         succeeded: false
       });
       expect(console.error.callCount).to.equal(0);
